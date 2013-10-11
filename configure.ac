@@ -76,6 +76,12 @@ if test $realtime = yes; then
   AC_CHECK_FUNC(gettimeofday, [cppflag="$cppflag -DHAVE_GETTIMEOFDAY"], )
 fi
 
+# Set paths if prefix is defined
+if test x"$prefix" != x; then
+  LIBS="$LIBS -L$prefix/lib"
+  CPPFLAGS="$CPPFLAGS -I$prefix/include"
+fi
+
 # For -I and -D flags
 CPPFLAGS="$CPPFLAGS $cppflag"
 
@@ -102,6 +108,11 @@ case $host in
 esac
 
 if test $realtime = yes; then
+  PKG_PROG_PKG_CONFIG
+  PKG_CHECK_MODULES([rtaudio], [librtaudio], , AC_MSG_ERROR(Real-time support requires the RtAudio library!))
+  PKG_CHECK_MODULES([rtmidi], [librtmidi], , AC_MSG_ERROR(Real-time support requires the RtMidi library!))
+  LIBS="$LIBS $rtaudio_LIBS $rtmidi_LIBS"
+
   # Checks for package options and external software
   AC_MSG_CHECKING(for audio API)
   case $host in
