@@ -80,7 +80,7 @@ if test $realtime = yes; then
 fi
 
 # Set paths if prefix is defined
-if test x"$prefix" != x; then
+if test x"$prefix" != x && test x"$prefix" != xNONE; then
   LIBS="$LIBS -L$prefix/lib"
   CPPFLAGS="$CPPFLAGS -I$prefix/include"
 fi
