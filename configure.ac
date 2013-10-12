@@ -6,6 +6,9 @@ AC_CONFIG_SRCDIR(src/Stk.cpp)
 AC_CONFIG_FILES(Makefile src/Makefile projects/demo/Makefile projects/effects/Makefile projects/ragamatic/Makefile projects/examples/Makefile projects/examples/libMakefile projects/eguitar/Makefile)
 
 m4_include([m4/pkg.m4])
+m4_include([m4/getpkg.m4])
+
+ARGS="$@"
 
 # Fill GXX with something before test.
 AC_SUBST( GXX, ["no"] )
@@ -110,13 +113,32 @@ case $host in
   AC_SUBST( libflags, ["-dynamiclib -o libstk.\$(RELEASE).dylib"] )
 esac
 
+# Checks that local or installed version of RtAudio and RtMidi are available
 if test $realtime = yes; then
-  PKG_PROG_PKG_CONFIG
-  PKG_CHECK_MODULES([rtaudio], [librtaudio >= 4], , AC_MSG_ERROR(Real-time support requires the RtAudio library version 4))
-  PKG_CHECK_MODULES([rtmidi], [librtmidi >= 2], , AC_MSG_ERROR(Real-time support requires the RtMidi library version 2))
+  PKG_GET(rtaudio, librtaudio,
+    [https://github.com/thestk/rtaudio.git], [4.0.12],
+    [https://github.com/thestk/rtaudio/archive/4.0.12.tar.gz],
+    [include], [],
+    [rtaudio_CFLAGS=-I`pwd`/rtaudio/include
+     rtaudio_LIBS="-L`pwd`/rtaudio -Wl,-rpath=`pwd`/rtaudio -lrtaudio"
+    ], [realtime=no])
+
+  PKG_GET(rtmidi, librtmidi,
+    [https://github.com/thestk/rtmidi.git], [2.0.1],
+    [https://github.com/thestk/rtmidi/archive/2.0.1.tar.gz],
+    [include], [],
+    [rtmidi_CFLAGS=-I`pwd`/rtmidi/include
+     rtmidi_LIBS="-L`pwd`/rtmidi -Wl,-rpath=`pwd`/rtmidi -lrtmidi"
+    ], [realtime=no])
+
   CXXFLAGS="$CXXFLAGS $rtaudio_CFLAGS $rtmidi_CFLAGS"
   LIBS="$LIBS $rtaudio_LIBS $rtmidi_LIBS"
+  if test $realtime != yes; then
+    AC_MSG_RESULT([Unable to find RtAudio or RtMidi, disabling real-time support.])
+  fi
+fi
 
+if test $realtime = yes; then
   # Checks for package options and external software
   AC_MSG_CHECKING(for audio API)
   case $host in
