@@ -114,6 +114,7 @@ if test $realtime = yes; then
   PKG_PROG_PKG_CONFIG
   PKG_CHECK_MODULES([rtaudio], [librtaudio], , AC_MSG_ERROR(Real-time support requires the RtAudio library!))
   PKG_CHECK_MODULES([rtmidi], [librtmidi], , AC_MSG_ERROR(Real-time support requires the RtMidi library!))
+  CXXFLAGS="$CXXFLAGS $rtaudio_CFLAGS $rtmidi_CFLAGS"
   LIBS="$LIBS $rtaudio_LIBS $rtmidi_LIBS"
 
   # Checks for package options and external software
