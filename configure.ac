@@ -112,8 +112,8 @@ esac
 
 if test $realtime = yes; then
   PKG_PROG_PKG_CONFIG
-  PKG_CHECK_MODULES([rtaudio], [librtaudio], , AC_MSG_ERROR(Real-time support requires the RtAudio library!))
-  PKG_CHECK_MODULES([rtmidi], [librtmidi], , AC_MSG_ERROR(Real-time support requires the RtMidi library!))
+  PKG_CHECK_MODULES([rtaudio], [librtaudio >= 4], , AC_MSG_ERROR(Real-time support requires the RtAudio library version 4))
+  PKG_CHECK_MODULES([rtmidi], [librtmidi >= 2], , AC_MSG_ERROR(Real-time support requires the RtMidi library version 2))
   CXXFLAGS="$CXXFLAGS $rtaudio_CFLAGS $rtmidi_CFLAGS"
   LIBS="$LIBS $rtaudio_LIBS $rtmidi_LIBS"
 
