@@ -39,3 +39,11 @@ endif
 install:
 	$(MAKE) -C src install
 
+dist:
+	@for f in `cat dist.txt`; do \
+	  mkdir -p @PACKAGE_TARNAME@-@PACKAGE_VERSION@/`dirname "$$f"`; \
+	  cp "$$f" @PACKAGE_TARNAME@-@PACKAGE_VERSION@/`dirname "$$f"`; \
+	done
+	@tar -czf @PACKAGE_TARNAME@-@PACKAGE_VERSION@.tar.gz @PACKAGE_TARNAME@-@PACKAGE_VERSION@
+	@rm -rf @PACKAGE_TARNAME@-@PACKAGE_VERSION@
+	@echo Created @PACKAGE_TARNAME@-@PACKAGE_VERSION@.tar.gz
